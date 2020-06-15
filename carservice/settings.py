@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
+    'garage.apps.GarageConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,7 +43,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'phonenumber_field',
     'rest_framework',
-    'rest_framework_swagger',
+    'drf_yasg',
 ]
 
 REST_FRAMEWORK = {

@@ -42,8 +42,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ('name_surname', 'phone_number')
 
-
-class CarSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Car
-        fields = ('user', 'car_model', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg')
+#
+# class CarSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Car
+#         fields = ('user', 'car_model', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg')

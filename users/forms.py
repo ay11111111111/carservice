@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Car, Profile
+from .models import Profile
 
 
 class UserRegisterForm(UserCreationForm):
@@ -25,21 +25,15 @@ class ProfileCreationForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['name_surname', 'phone_number']
-
-class CarCreationForm(forms.ModelForm):
-
-    class Meta:
-        model = Car
-        fields = ['car_model', 'year_of_issue','korobka', 'volume_dvigatel', 'probeg']
+#
+# class CarCreationForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = Car
+#         fields = ['car_model', 'year_of_issue','korobka', 'volume_dvigatel', 'probeg']
 
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['name_surname', 'phone_number']
-
-# class CarCreationForm(forms.ModelForm):
-#
-#     class Meta:
-#         model =
-#
