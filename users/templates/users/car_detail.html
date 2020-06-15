@@ -1,0 +1,15 @@
+{% extends "app/base.html" %}
+{% block content %}
+  <article class="media content-section">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ car.car_model }}</a>
+        <a class="mr-2" href="#">{{ car.year_of_issue }}</a>
+
+        <!-- <small class="text-muted">{{ book.date_posted }}</small> -->
+      </div>
+      <h2 class="article-title">{{ car.id }}</h2>
+      <!-- <p class="article-content">{{ post.content }}</p> -->
+    </div>
+  </article>
+{% endblock content %}
