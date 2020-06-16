@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile
+from .models import CustomUser
 
 # class CarAdmin(admin.ModelAdmin):
 #     list_display = ['get_user', 'car_model', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg']
@@ -10,6 +10,6 @@ from .models import Profile
 #
 #
 # admin.site.register(Car, CarAdmin)
-admin.site.register(Profile)
+admin.site.register(CustomUser)
 
 # Register your models here.

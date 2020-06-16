@@ -37,10 +37,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ('name_surname', 'phone_number')
+# class ProfileSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Profile
+#         fields = ('name_surname', 'phone_number')
 
 #
 # class CarSerializer(serializers.ModelSerializer):

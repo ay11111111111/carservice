@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
-from django.contrib.auth import views as auth_views
 from users import views as user_views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -40,12 +39,12 @@ urlpatterns = [
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('', include('app.urls')),
-    path('users/', include('users.urls')),
+    # path('users/', include('users.urls')),
     path('garage/', include('garage.urls')),
     path('admin/', admin.site.urls),
     path('register/', user_views.register, name="register"),
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name="login"),
-    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
+    path('login/', user_views.login_view, name="login"),
+    path('logout/', user_views.logout_view, name="logout"),
     path('profile/', user_views.profile, name="profile"),
     path('api/v1/auth/', include('users.api.urls')),
     path('api/v1/cars/', include('garage.api.urls')),

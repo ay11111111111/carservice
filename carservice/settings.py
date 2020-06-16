@@ -44,10 +44,15 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'rest_framework',
     'drf_yasg',
+    'rest_framework.authtoken'
+
 ]
 
 REST_FRAMEWORK = {
-  'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+  'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+  'DEFAULT_AUTHENTICATION_CLASSES': [
+      'rest_framework.authentication.TokenAuthentication',
+  ]
 }
 
 MIDDLEWARE = [

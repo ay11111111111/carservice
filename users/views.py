@@ -1,25 +1,57 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from .forms import (UserRegisterForm, UserUpdateForm,
-                    ProfileCreationForm,
+from .forms import (CustomUserCreationForm, UserUpdateForm,
+                    CustomAuthenticationForm
                     )
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
-from .models import Profile
+from .models import CustomUser
 from django.utils.decorators import method_decorator
 
 def register(request):
     if request.method == "POST":
-        form = UserRegisterForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Your account has been created! You can login now.')
+            email = form.cleaned_data.get('email')
+            messages.success(request, f'Your account has been created {email}! You can login now.')
             return redirect('login')
     else:
-        form = UserRegisterForm()
+        form = CustomUserCreationForm()
 
     return render(request, 'users/register.html', {'form':form})
+
+
+
+def logout_view(request):
+	logout(request)
+	return redirect('home')
+
+
+def login_view(request):
+    # context = {}
+    user = request.user
+    if user.is_authenticated:
+        return redirect("home")
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request.POST)
+        if form.is_valid():
+            email = request.POST['email']
+            password = request.POST['password']
+            user = authenticate(email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect("home")
+    else:
+        form = CustomAuthenticationForm()
+
+    context = {
+        'form':form
+        }
+
+    return render(request, "users/login.html", context)
+
 
 @login_required
 def profile(request):
@@ -41,37 +73,12 @@ def profile(request):
     }
     return render(request, 'users/profile.html', context)
 
-
-@method_decorator(login_required, name='dispatch')
-class ProfileCreateView(CreateView):
-    model = Profile
-    success_url = 'car/create'
-    form_class = ProfileCreationForm
-    def form_valid(self, form):
-        form.instance.user= self.request.user
-        return super().form_valid(form)
-
-
+#
 # @method_decorator(login_required, name='dispatch')
-# class CarCreateView(CreateView):
-#     model = Car
-#     success_url = '/'
-#     form_class = CarCreationForm
+# class ProfileCreateView(CreateView):
+#     model = Profile
+#     success_url = 'car/create'
+#     form_class = ProfileCreationForm
 #     def form_valid(self, form):
 #         form.instance.user= self.request.user
 #         return super().form_valid(form)
-#
-# @method_decorator(login_required, name='dispatch')
-# class CarDetailView(DetailView):
-#     model = Car
-#     fields = ['car_model', 'year_of_issue','korobka','probeg']
-#
-# @method_decorator(login_required, name='dispatch')
-# class CarUpdateView(UpdateView):
-#     model = Car
-#     fields = ['car_model', 'year_of_issue','korobka','probeg']
-#
-# @method_decorator(login_required, name='dispatch')
-# class CarDeleteView(DeleteView):
-#     model = Car
-#     success_url = '/'
