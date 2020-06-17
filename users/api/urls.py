@@ -7,6 +7,7 @@ urlpatterns = [
     path('<int:pk>', views.user_detail, name='detail'),
     path('<int:pk>/update', views.user_update, name='update'),
     path('register', views.user_register, name='register'),
+    path('login', views.CustomAuthTokenAPI.as_view(), name='login'),
 ]
 
 

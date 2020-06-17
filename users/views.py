@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from .forms import (CustomUserCreationForm, UserUpdateForm,
+from .forms import (CustomUserCreationForm,
+                    UserUpdateForm,
                     CustomAuthenticationForm
                     )
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from .models import CustomUser
 from django.utils.decorators import method_decorator
+from django.core.exceptions import ValidationError
 
 def register(request):
     if request.method == "POST":
@@ -30,10 +31,6 @@ def logout_view(request):
 
 
 def login_view(request):
-    # context = {}
-    user = request.user
-    if user.is_authenticated:
-        return redirect("home")
     if request.method == 'POST':
         form = CustomAuthenticationForm(request.POST)
         if form.is_valid():
@@ -42,6 +39,7 @@ def login_view(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
+                messages.success(request, f'You are logged in!')
                 return redirect("home")
     else:
         form = CustomAuthenticationForm()

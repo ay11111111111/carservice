@@ -18,6 +18,7 @@ from django.core.exceptions import ValidationError
 #         fields = ['email', 'password1', 'password2']
 
 class CustomUserCreationForm(forms.Form):
+
     email = forms.EmailField(label='Enter email')
     password1 = forms.CharField(label='Enter password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
@@ -49,7 +50,7 @@ class CustomUserCreationForm(forms.Form):
 
 class CustomAuthenticationForm(forms.ModelForm):
 
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Password')#, widget=forms.PasswordInput)
 
     class Meta:
         model = CustomUser
@@ -60,12 +61,12 @@ class CustomAuthenticationForm(forms.ModelForm):
         password = self.cleaned_data.get('password')
 
         if email is not None and password:
-            self.user_cache = authenticate(email=email, password=password)
-            if self.user_cache is None:
+            user = authenticate(email=email, password=password)
+            if user is None:
                 raise forms.ValidationError("Invalid login")
-            else:
-                self.confirm_login_allowed(self.user_cache)
-        return self.cleaned_data
+        #     else:
+        #         self.confirm_login_allowed(self.user_cache)
+        # return self.cleaned_data
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -81,8 +82,8 @@ class ProfileCreationForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['name_surname', 'phone_number']
-#
-#
+
+
 # class ProfileUpdateForm(forms.ModelForm):
 #     class Meta:
 #         model = Profile

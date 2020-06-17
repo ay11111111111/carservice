@@ -1,16 +1,14 @@
 from rest_framework import serializers
-from ..models import Car
-from django.contrib.auth.models import User
-
+from ..models import Car, CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'username', 'email')
+        model = CustomUser
+        fields = ('id','email')
 
 
 class CarSerializer(serializers.ModelSerializer):
-    user_id = UserSerializer
+    user = UserSerializer
     class Meta:
         model = Car
-        fields = ('id', 'user_id', 'car_model', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg')
+        fields = ('id', 'car_model', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg')

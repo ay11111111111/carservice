@@ -2,9 +2,10 @@ from ..models import Car
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.models import User
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
 
 
 @swagger_auto_schema(method='get')
@@ -13,30 +14,40 @@ def car_list(request):
     cars = Car.objects.all()
     serializer = CarSerializer(cars, many=True)
     return Response(serializer.data)
-#
+
 
 @swagger_auto_schema(method='post', request_body=CarSerializer)
 @api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
 def car_create(request):
+    user = request.user
+    car = Car(user=user)
     if request.method == 'POST':
-        serializer = CarSerializer(data=request.data)
+        serializer = CarSerializer(car, data=request.data)
         data = {}
         if serializer.is_valid():
             car = serializer.save()
+            data['id'] = car.id
             data['response'] = 'successfully registered new car'
-            data['user'] = car.user_id
+            data['user'] = car.user.email
             data['car_model'] = car.car_model
         else:
             data = serializer.errors
 
         return Response(data)
-    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @swagger_auto_schema(method='put', request_body=CarSerializer)
 @api_view(['PUT'])
+@permission_classes((IsAuthenticated, ))
 def car_update(request, pk):
+
     try:
         car = Car.objects.get(pk=pk)
+        user = request.user
+        if user != car.user:
+            return Response({'response':'You dont have a permission to update this car!'})
+
     except car.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'PUT':
@@ -49,9 +60,14 @@ def car_update(request, pk):
 
 @swagger_auto_schema(methods=['get', 'delete'])
 @api_view(['GET', 'DELETE'])
+@permission_classes((IsAuthenticated, ))
 def car_detail(request, pk):
     try:
         car = Car.objects.get(pk=pk)
+        user = request.user
+        if user != car.user:
+            return Response({'response':'You dont have a permission to acess this car!'})
+
     except car.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 

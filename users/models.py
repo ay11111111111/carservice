@@ -1,16 +1,15 @@
 from django.db import models
-# from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
+from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 
-class MyAccountManager(BaseUserManager):
+class CustomUserManager(BaseUserManager):
 	def _create_user(self, email, password, **extra_fields):
 		"""
         Creates and saves a User with the given email and password.
@@ -30,37 +29,14 @@ class MyAccountManager(BaseUserManager):
 		extra_fields.setdefault('is_superuser', True)
 		extra_fields.setdefault('is_admin', True)
 		extra_fields.setdefault('is_staff', True)
-		extra_fields.setdefault('birthday', "1993-05-07")
 
 		if extra_fields.get('is_superuser') is not True:
 			raise ValueError('Superuser must have is_superuser=True.')
 
 		return self._create_user(email, password, **extra_fields)
-	# def create_user(self, email, password=None):
-	# 	if not email:
-	# 		raise ValueError('Users must have an email address')
-	#
-	# 	user = self.model(
-	# 		email=self.normalize_email(email),
-	# 	)
-	#
-	# 	user.set_password(password)
-	# 	user.save(using=self._db)
-	# 	return user
-	#
-	# def create_superuser(self, email, password):
-	# 	user = self.create_user(
-	# 		email=self.normalize_email(email),
-	# 		password=password,
-	# 	)
-	# 	user.is_admin = True
-	# 	user.is_staff = True
-	# 	user.is_superuser = True
-	# 	user.save(using=self._db)
-	# 	return user
 
 
-class CustomUser(AbstractBaseUser):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     name_surname = models.CharField(blank=True, max_length=60)
     phone_number = PhoneNumberField(blank=True)
@@ -73,7 +49,7 @@ class CustomUser(AbstractBaseUser):
 
 
     USERNAME_FIELD = 'email'
-    objects = MyAccountManager()
+    objects = CustomUserManager()
 
     def __str__(self):
         return self.email

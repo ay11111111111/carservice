@@ -1,30 +1,26 @@
 from rest_framework import serializers
-from ..models import *
-from django.contrib.auth.models import User
+from ..models import CustomUser
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import authenticate
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'username', 'email')
+        model = CustomUser
+        fields = ('email', 'password')
 
-    # def create(self, validated_data):
-    #     user = super().create(validated_data)
-    #     user.set_password(validated_data['password'])
-    #     user.save()
-    #     return user
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
     class Meta:
-        model = User
-        fields = ('username', 'email', 'password', 'password2')
+        model = CustomUser
+        fields = ('email', 'password', 'password2')
         extra_kwargs = {
                 'password':{'write_only': True}
         }
 
     def save(self):
-        user = User(
-                username=self.validated_data['username'],
+        user = CustomUser(
                 email=self.validated_data['email'],
             )
         password = self.validated_data['password']
@@ -37,12 +33,47 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-# class ProfileSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Profile
-#         fields = ('name_surname', 'phone_number')
+class AuthTokenSerializer(serializers.Serializer):
+    email = serializers.EmailField(
+        label=_("Email"),
+        write_only=True
+    )
+    password = serializers.CharField(
+        label=_("Password"),
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        write_only=True
+    )
+    token = serializers.CharField(
+        label=_("Token"),
+        read_only=True
+    )
 
-#
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        if email and password:
+            user = authenticate(request=self.context.get('request'),
+                                email=email, password=password)
+
+            if not user:
+                msg = _('Unable to log in with provided credentials.')
+                raise serializers.ValidationError(msg, code='authorization')
+        else:
+            msg = _('Must include "username" and "password".')
+            raise serializers.ValidationError(msg, code='authorization')
+
+        attrs['user'] = user
+        return attrs
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'name_surname', 'phone_number')
+
+
 # class CarSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Car
