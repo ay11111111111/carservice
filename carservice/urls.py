@@ -35,18 +35,17 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('', include('app.urls')),
-    # path('users/', include('users.urls')),
-    path('garage/', include('garage.urls')),
-    path('admin/', admin.site.urls),
-    path('register/', user_views.register, name="register"),
-    path('login/', user_views.login_view, name="login"),
-    path('logout/', user_views.logout_view, name="logout"),
-    path('profile/', user_views.profile, name="profile"),
-    path('api/v1/auth/', include('users.api.urls')),
-    path('api/v1/cars/', include('garage.api.urls')),
+    url(r'^carservice/swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^carservice/swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^carservice/redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('carservice/', include('app.urls')),
+    path('carservice/garage/', include('garage.urls')),
+    path('carservice/admin/', admin.site.urls),
+    path('carservice/register/', user_views.register, name="register"),
+    path('carservice/login/', user_views.login_view, name="login"),
+    path('carservice/logout/', user_views.logout_view, name="logout"),
+    path('carservice/profile/', user_views.profile, name="profile"),
+    path('carservice/api/v1/auth/', include('users.api.urls')),
+    path('carservice/api/v1/cars/', include('garage.api.urls')),
 
 ]
