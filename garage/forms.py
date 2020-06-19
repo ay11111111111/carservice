@@ -1,5 +1,6 @@
 from django import forms
 from .models import Car
+import os, json
 
 
 class CarCreationForm(forms.ModelForm):
@@ -7,4 +8,4 @@ class CarCreationForm(forms.ModelForm):
     volume_dvigatel = forms.ChoiceField(choices=VOLUMES)
     class Meta:
         model = Car
-        fields = ['car_model', 'year_of_issue','korobka', 'volume_dvigatel', 'probeg']
+        fields = ['car_marka', 'car_model', 'year_of_issue','korobka', 'volume_dvigatel', 'probeg']

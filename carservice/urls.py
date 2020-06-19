@@ -20,6 +20,7 @@ from users import views as user_views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+import smart_selects
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -47,5 +48,6 @@ urlpatterns = [
     path('carservice/profile/', user_views.profile, name="profile"),
     path('carservice/api/v1/auth/', include('users.api.urls')),
     path('carservice/api/v1/cars/', include('garage.api.urls')),
+    url(r'^chaining/', include('smart_selects.urls')),
 
 ]
