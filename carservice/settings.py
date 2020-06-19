@@ -45,9 +45,12 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'rest_framework',
     'drf_yasg',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'smart_selects',
 
 ]
+
+USE_DJANGO_JQUERY = True
 
 REST_FRAMEWORK = {
   'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
@@ -148,7 +151,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-ALLOWED_HOSTS = ['185.116.194.41']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
