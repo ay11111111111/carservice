@@ -36,6 +36,14 @@ class CarModel(models.Model):
     def __str__(self):
         return self.name
 
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+
+    def __repr__(self):
+        try:
+            return self.toJSON()
+        except:
+            return self.__dict__
 
 class Car(models.Model):
     KOROBKA_CHOICES = (
@@ -63,6 +71,12 @@ class Car(models.Model):
 
     def __str__(self):
         return self.user.email + '\'s ' + self.car_marka.name + ' ' + self.car_model.name
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+
+    def __repr__(self):
+        return self.toJSON()
 
 class Event(models.Model):
     EVENT_CHOICES = (
