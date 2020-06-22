@@ -30,8 +30,8 @@ def car_create(request):
             data['id'] = car.id
             data['response'] = 'successfully registered new car'
             data['user'] = car.user.email
-            data['car_marka'] = car.car_model
-            data['car_model'] = car.car_model
+            data['car_marka'] = car.car_marka.name
+            data['car_model'] = car.car_model.name
         else:
             data = serializer.errors
 
