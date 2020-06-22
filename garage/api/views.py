@@ -1,4 +1,4 @@
-from ..models import Car
+from ..models import Car, Event
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status, viewsets
@@ -79,3 +79,55 @@ def car_detail(request, pk):
     elif request.method == 'DELETE':
         car.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@swagger_auto_schema(method='post', request_body=ServiceEventSerializer)
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+def service_event_create(request, pk):
+    car = Car.objects.get(pk=pk)
+    event = Event(car=car,type='service')
+    if request.method == 'POST':
+        serializer = ServiceEventSerializer(event, data=request.data)
+        data = {}
+        if serializer.is_valid():
+            serializer.save()
+            data['response'] = 'successfully registered new service event'
+        else:
+            data = serializer.errors
+
+        return Response(data)
+
+@swagger_auto_schema(method='post', request_body=ServiceEventSerializer)
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+def other_event_create(request, pk):
+    car = Car.objects.get(pk=pk)
+    event = Event(car=car,type='other')
+    if request.method == 'POST':
+        serializer = ServiceEventSerializer(event, data=request.data)
+        data = {}
+        if serializer.is_valid():
+            serializer.save()
+            data['response'] = 'successfully registered new other event'
+        else:
+            data = serializer.errors
+
+        return Response(data)
+
+@swagger_auto_schema(method='post', request_body=ZapravkaEventSerializer)
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+def zapravka_event_create(request, pk):
+    car = Car.objects.get(pk=pk)
+    event = Event(car=car,type='zapravka')
+    if request.method == 'POST':
+        serializer = ZapravkaEventSerializer(event, data=request.data)
+        data = {}
+        if serializer.is_valid():
+            serializer.save()
+            data['response'] = 'successfully registered new zapravka event'
+        else:
+            data = serializer.errors
+
+        return Response(data)
