@@ -1,7 +1,7 @@
 from django import forms
 # from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser, Profile
+from .models import CustomUser
 from django.contrib.auth import (
     authenticate, get_user_model, password_validation,
 )
@@ -76,12 +76,12 @@ class UserUpdateForm(forms.ModelForm):
         model = CustomUser
         fields = ['email']
 
-
-class ProfileCreationForm(forms.ModelForm):
-
-    class Meta:
-        model = Profile
-        fields = ['name_surname', 'phone_number']
+# 
+# class ProfileCreationForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = Profile
+#         fields = ['name_surname', 'phone_number']
 
 
 # class ProfileUpdateForm(forms.ModelForm):

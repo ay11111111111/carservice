@@ -4,11 +4,15 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import authenticate
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('email', 'password')
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'name_surname', 'phone_number')
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
@@ -68,10 +72,14 @@ class AuthTokenSerializer(serializers.Serializer):
         return attrs
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfileCreateSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = CustomUser
-        fields = ('email', 'name_surname', 'phone_number')
+        fields = ('name_surname', 'phone_number')
+
+
+
 
 
 # class CarSerializer(serializers.ModelSerializer):
