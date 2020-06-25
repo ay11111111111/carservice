@@ -6,12 +6,14 @@ from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.models import User
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
+from drf_yasg import openapi
 
 
-@swagger_auto_schema(method='get')
+@swagger_auto_schema(method='get', operation_description="GET list of cars")
 @api_view(['GET'])
 def car_list(request):
-    cars = Car.objects.all()
+    user = request.user
+    cars = user.car_set
     serializer = CarSerializer(cars, many=True)
     return Response(serializer.data)
 

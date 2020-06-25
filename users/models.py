@@ -39,7 +39,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     name_surname = models.CharField(blank=True, max_length=60)
-    phone_number = PhoneNumberField(blank=True)
+    phone_number = models.CharField(max_length=200, blank=True, null=True)
     date_joined	= models.DateTimeField(verbose_name='date joined', auto_now_add=True)
     last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
     is_admin = models.BooleanField(default=False)
@@ -67,15 +67,3 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
-
-
-class Profile(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    name_surname = models.CharField(max_length=60)
-    phone_number = PhoneNumberField(default='')
-
-    def __str__(self):
-        return f'{self.user.username} Profile'
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)

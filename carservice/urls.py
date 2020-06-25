@@ -50,7 +50,6 @@ urlpatterns = [
     path('carservice/register/', user_views.register, name="register"),
     path('carservice/login/', user_views.login_view, name="login"),
     path('carservice/logout/', user_views.logout_view, name="logout"),
-    path('carservice/profile/', user_views.profile, name="profile"),
     path('carservice/api/v1/auth/', include('users.api.urls')),
     path('carservice/api/v1/cars/', include('garage.api.urls')),
     path('carservice/api/v1/notification/', include('notification.api.urls')),

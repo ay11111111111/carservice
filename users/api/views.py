@@ -42,7 +42,7 @@ class CustomAuthTokenAPI(ObtainAuthToken):
     renderer_classes = (renderers.JSONRenderer,)
     serializer_class = AuthTokenSerializer
 
-    @swagger_auto_schema(operation_description="PUT Login", request_body=UserSerializer)
+    @swagger_auto_schema(operation_description="PUT Login", request_body=UserLoginSerializer)
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
@@ -58,18 +58,11 @@ class CustomAuthTokenAPI(ObtainAuthToken):
 @swagger_auto_schema(methods=['PUT'], request_body=UserSerializer)
 @api_view(['PUT'])
 @permission_classes((IsAuthenticated, ))
-def user_update(request, pk):
-    cur_user = request.user
-
-    try:
-        user = CustomUser.objects.get(pk=pk)
-        if cur_user != user:
-            return Response({'response':'You dont have a permission to update this user!'})
-    except user.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+def user_update(request):
+    user = request.user
 
     if request.method == 'PUT':
-        serializer = ProfileSerializer(user, data=request.data)
+        serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -79,20 +72,32 @@ def user_update(request, pk):
 @swagger_auto_schema(methods=['get', 'delete'])
 @api_view(['GET', 'DELETE'])
 @permission_classes((IsAuthenticated, ))
-def user_detail(request, pk):
-    try:
-        user = CustomUser.objects.get(pk=pk)
-        cur_user = request.user
-        if cur_user != user:
-            return Response({'response':'You dont have a permission to update this user!'})
-
-    except user.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
+def user_detail(request):
+    user = request.user
     if request.method == 'GET':
-        serializer = ProfileSerializer(user)
+        serializer = UserSerializer(user)
         return Response(serializer.data)
 
     elif request.method == 'DELETE':
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@swagger_auto_schema(operation_description="POST Register new user", method='post',
+                    request_body=ProfileCreateSerializer)
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+def profile_create(request):
+    if request.method == 'POST':
+        user = request.user
+        serializer = ProfileCreateSerializer(user, data=request.data)
+        data = {}
+        if serializer.is_valid():
+            user = serializer.save()
+            data['response'] = 'successfully registered new user'
+            data['name_surname'] = user.name_surname
+            data['phone_number'] = user.phone_number
+        else:
+            data = serializer.errors
+
+        return Response(data)
