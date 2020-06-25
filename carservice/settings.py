@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
     'garage.apps.GarageConfig',
-    'notification.apps.NotificationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,15 +48,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'smart_selects',
     'datetime',
-    'fcm_django',
-]
 
-FCM_DJANGO_SETTINGS = {
-        "APP_VERBOSE_NAME": "carservice",
-        "FCM_SERVER_KEY": "AAAA3tZmleU:APA91bFMrBGIDBs7FRaFyZ8NOMKoCBJWWJ0-Ywx1MJjW6XgbkLfKOaZssdi6TXsiVfp1xiwCljCYbhKxwnI8fhSnxqgO2bbzJOFPTv-agoH0k0SvyA6MZonNmoFm786BYcuDeahvH2JY",
-        "ONE_DEVICE_PER_USER": False,
-        "DELETE_INACTIVE_DEVICES": False,
-}
+]
 
 USE_DJANGO_JQUERY = True
 
@@ -160,8 +152,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-# ALLOWED_HOSTS = ['185.116.194.41']
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['185.116.194.41']
+#ALLOWED_HOSTS = ['127.0.0.1']
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = 'home'
