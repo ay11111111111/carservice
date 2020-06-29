@@ -37,13 +37,17 @@ def event_list(request, pk):
     return Response(serializer.data)
 
 
-@swagger_auto_schema(method='get', operation_description="GET list of car models and brands")
+@swagger_auto_schema(method='get', operation_description="GET list of car models by brand_id")
 @api_view(['GET'])
 # @permission_classes((AllowAny, ))
-def carmodel_list(request):
-    carmodels = CarModel.objects.all()
+def carmodel_list(request, pk):
+    carbrand = CarBrand.objects.get(pk=pk)
+    carmodels = carbrand.carmodel_set
     serializer = CarModelSerializer(carmodels, many=True)
-    return Response(serializer.data)
+    arr = []
+    for i in serializer.data:
+        arr.append(i['name'])
+    return Response(arr)
 
 
 @swagger_auto_schema(method='get', operation_description="GET list of car models and brands")
