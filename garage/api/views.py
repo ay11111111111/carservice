@@ -44,10 +44,7 @@ def carmodel_list(request, pk):
     carbrand = CarBrand.objects.get(pk=pk)
     carmodels = carbrand.carmodel_set
     serializer = CarModelSerializer(carmodels, many=True)
-    arr = []
-    for i in serializer.data:
-        arr.append(i['name'])
-    return Response(arr)
+    return Response(serializer.data)
 
 
 @swagger_auto_schema(method='get', operation_description="GET list of car models and brands")
