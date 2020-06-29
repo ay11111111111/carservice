@@ -1,4 +1,4 @@
-from ..models import Car, Event
+from ..models import Car, Event, CarModel, CarBrand
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status, viewsets
@@ -11,10 +11,47 @@ from drf_yasg import openapi
 
 @swagger_auto_schema(method='get', operation_description="GET list of cars")
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def car_list(request):
     user = request.user
     cars = user.car_set
     serializer = CarSerializer(cars, many=True)
+    return Response(serializer.data)
+
+
+@swagger_auto_schema(method='get', operation_description="GET list of events for car (id)")
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def event_list(request, pk):
+    try:
+        car = Car.objects.get(pk=pk)
+        user = request.user
+        if user != car.user:
+            return Response({'response':'You dont have a permission to update this car!'})
+
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    events = car.event_set
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)
+
+
+@swagger_auto_schema(method='get', operation_description="GET list of car models and brands")
+@api_view(['GET'])
+# @permission_classes((AllowAny, ))
+def carmodel_list(request):
+    carmodels = CarModel.objects.all()
+    serializer = CarModelSerializer(carmodels, many=True)
+    return Response(serializer.data)
+
+
+@swagger_auto_schema(method='get', operation_description="GET list of car models and brands")
+@api_view(['GET'])
+# @permission_classes((AllowAny, ))
+def carbrand_list(request):
+    carbrands = CarBrand.objects.all()
+    serializer = CarBrandSerializer(carbrands, many=True)
     return Response(serializer.data)
 
 
@@ -51,8 +88,9 @@ def car_update(request, pk):
         if user != car.user:
             return Response({'response':'You dont have a permission to update this car!'})
 
-    except car.DoesNotExist:
+    except:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
     if request.method == 'PUT':
         serializer = CarSerializer(car, data=request.data)
         if serializer.is_valid():
@@ -71,7 +109,7 @@ def car_detail(request, pk):
         if user != car.user:
             return Response({'response':'You dont have a permission to acess this car!'})
 
-    except car.DoesNotExist:
+    except:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
