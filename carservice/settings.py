@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
     'garage.apps.GarageConfig',
+    'notification.apps.NotificationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'smart_selects',
     'datetime',
+    'fcm_django',
 
 ]
 
@@ -152,8 +154,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-ALLOWED_HOSTS = ['185.116.194.41']
-#ALLOWED_HOSTS = ['127.0.0.1']
+#ALLOWED_HOSTS = ['185.116.194.41']
+ALLOWED_HOSTS = ['127.0.0.1']
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = 'home'
