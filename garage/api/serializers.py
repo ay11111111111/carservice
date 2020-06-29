@@ -50,14 +50,15 @@ class CarBrandSerializer(serializers.ModelSerializer):
 
 
 class CarModelSerializer(serializers.ModelSerializer):
-    brand = serializers.SerializerMethodField('get_brand')
-    def get_brand(self, obj):
-        return obj.brand.name
-
-    brand_id = serializers.SerializerMethodField('get_brandid')
-    def get_brandid(self, obj):
-        return obj.brand.id
+    # brand = serializers.SerializerMethodField('get_brand')
+    # def get_brand(self, obj):
+    #     return obj.brand.name
+    #
+    # brand_id = serializers.SerializerMethodField('get_brandid')
+    # def get_brandid(self, obj):
+    #     return obj.brand.id
 
     class Meta:
         model = CarModel
-        fields = ('id', 'brand_id', 'brand', 'name')
+        # fields = ('id', 'brand_id', 'brand', 'name')
+        fields = ('name', )
