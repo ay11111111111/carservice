@@ -61,8 +61,9 @@ class Car(models.Model):
         auto_choose=True,
         sort=True
     )
-    year_of_issue = models.IntegerField(('Год выпуска'), choices=year_choices(), default=current_year)
-    korobka = models.CharField(max_length=60, choices=KOROBKA_CHOICES, verbose_name='Коробка')
+    # year_of_issue = models.IntegerField(('Год выпуска'), choices=year_choices(), default=current_year)
+    year_of_issue = models.CharField(max_length=5, verbose_name='Год выпуска')
+    korobka = models.CharField(max_length=60, verbose_name='Коробка')
     volume_dvigatel = models.DecimalField(default=0, max_digits=10, decimal_places=1, verbose_name='Объем двигателя')
     probeg = models.IntegerField(verbose_name='Пробег')
 
