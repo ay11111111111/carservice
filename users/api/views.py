@@ -31,10 +31,10 @@ def user_register(request):
             data['email'] = user.email
             token = Token.objects.get(user=user).key
             data['token'] = token
+            return Response(data)
         else:
             data = serializer.errors
-
-        return Response(data)
+            return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
 class CustomAuthTokenAPI(ObtainAuthToken):
