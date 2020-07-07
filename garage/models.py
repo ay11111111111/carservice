@@ -24,6 +24,7 @@ def get_model_choices(car_marka):
 
 class CarBrand(models.Model):
     name = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to='logos/', default='default.png', blank=True)
 
     def __str__(self):
         return self.name
@@ -61,7 +62,6 @@ class Car(models.Model):
         auto_choose=True,
         sort=True
     )
-    # year_of_issue = models.IntegerField(('Год выпуска'), choices=year_choices(), default=current_year)
     year_of_issue = models.CharField(max_length=5, verbose_name='Год выпуска')
     korobka = models.CharField(max_length=60, verbose_name='Коробка')
     volume_dvigatel = models.DecimalField(default=0, max_digits=10, decimal_places=1, verbose_name='Объем двигателя')
@@ -78,6 +78,20 @@ class Car(models.Model):
 
     def __repr__(self):
         return self.toJSON()
+
+    def get_upload_to(self, filename):
+        folder_name = 'images'
+        filename = self.file.field.storage.get_valid_name(filename)
+        return os.path.join(folder_name, filename)
+
+
+class CarImages(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='images/', verbose_name='Image')
+
+    def __str__(self):
+        return self.car.user.email + '\'s ' + self.car.car_marka.name + ' ' + self.car.car_model.name
+
 
 class Event(models.Model):
     EVENT_CHOICES = (

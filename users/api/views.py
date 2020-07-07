@@ -9,7 +9,11 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework import parsers, renderers, status
 from rest_framework.views import APIView
-
+from rest_framework.viewsets import GenericViewSet
+from django.core.mail import send_mail, EmailMessage
+from .others import *
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
 
 @swagger_auto_schema(method='get')
 @api_view(['GET'])
@@ -103,3 +107,65 @@ def profile_create(request):
             data = serializer.errors
 
         return Response(data)
+
+
+
+class NewPassword(GenericViewSet):
+    serializer_class = NewPasswordSerializer
+    permission_classes = (IsAuthenticated, )
+
+    @swagger_auto_schema(operation_description="Change password",
+                responses={400: 'Bad request body', 200:'Success'})
+    def post(self, request):
+        body = request.data.copy()
+        serializer = self.serializer_class(data=body)
+        if serializer.is_valid():
+            if serializer.is_equal(body):
+                if request.user.check_password(body['old_password']):
+                    request.user.set_password(body['password'])
+                    request.user.save()
+                    return Response({'message':'Success'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'message':'incorrect old password'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'passwords are not equal'},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class ForgotPassword(GenericViewSet):
+    serializer_class = ForgotPasswordSerializer
+    # permission_classes = (permissions.AllowAny, )
+
+    def post(self, request):
+        body = request.data.copy()
+        serializer = self.serializer_class(data=body)
+        if serializer.is_valid():
+            try:
+                user = CustomUser.objects.get(email=body['email'])
+                if user.is_active:
+                    new_pass = randomStringDigits()
+                    user.set_password(new_pass)
+                    user.save()
+                    subject = 'Сменить пароль!'
+                    message = ''
+                    from_mail = settings.EMAIL_HOST_USER
+                    to_list = [user.email,]
+                    current_site = get_current_site(request)
+                    email_tmp = render_to_string(
+                        'forgot_password.html',
+                        {
+                            'user': user,
+                            'new_password': new_pass,
+                        }
+                    )
+                    send_mail(subject, message, from_mail, to_list, fail_silently=True, html_message=email_tmp)
+                    # msg = EmailMessage(subject, message, to_list)
+                    # msg.send()
+                    return Response({'message': 'Success'}, status=status.HTTP_200_OK)
+                return Response({'message': 'Not active'}, status=status.HTTP_404_NOT_FOUND)
+            except User.DoesNotExist:
+                return Response({'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
