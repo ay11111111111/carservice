@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Car, CarBrand, CarModel, Event
+from .models import Car, CarBrand, CarModel, Event, CarImages
 
 
 class CarModelAdmin(admin.ModelAdmin):
@@ -18,4 +18,5 @@ class EventAdmin(admin.ModelAdmin):
 admin.site.register(CarBrand)
 admin.site.register(CarModel, CarModelAdmin)
 admin.site.register(Car, CarAdmin)
+admin.site.register(CarImages)
 admin.site.register(Event, EventAdmin)

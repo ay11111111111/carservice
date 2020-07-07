@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Car, CustomUser, Event, CarModel, CarBrand
+from ..models import Car, CustomUser, Event, CarModel, CarBrand, CarImages
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -54,3 +54,10 @@ class CarModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarModel
         fields = ('id', 'name')
+
+
+class CarImgSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CarImages
+        fields = ('image', )

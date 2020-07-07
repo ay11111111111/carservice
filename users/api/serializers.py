@@ -37,6 +37,18 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class NewPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField()
+    confirm = serializers.CharField()
+    old_password = serializers.CharField()
+
+    def is_equal(self, data):
+        return data['password'] == data['confirm']
+
+
 class AuthTokenSerializer(serializers.Serializer):
     email = serializers.EmailField(
         label=_("Email"),

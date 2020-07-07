@@ -2,10 +2,12 @@ from ..models import Car, Event, CarModel, CarBrand
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.parsers import MultiPartParser, FileUploadParser
 from django.contrib.auth.models import User
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import CreateAPIView
 from drf_yasg import openapi
 
 
@@ -39,7 +41,6 @@ def event_list(request, pk):
 
 @swagger_auto_schema(method='get', operation_description="GET list of car models by brand_id")
 @api_view(['GET'])
-# @permission_classes((AllowAny, ))
 def carmodel_list(request, pk):
     carbrand = CarBrand.objects.get(pk=pk)
     carmodels = carbrand.carmodel_set
@@ -49,7 +50,6 @@ def carmodel_list(request, pk):
 
 @swagger_auto_schema(method='get', operation_description="GET list of car models and brands")
 @api_view(['GET'])
-# @permission_classes((AllowAny, ))
 def carbrand_list(request):
     carbrands = CarBrand.objects.all()
     serializer = CarBrandSerializer(carbrands, many=True)
@@ -172,3 +172,43 @@ def zapravka_event_create(request, pk):
             data = serializer.errors
 
         return Response(data)
+
+
+@swagger_auto_schema(methods=['get', 'delete'], operation_description='GET or DELETE event by its id')
+@api_view(['GET', 'DELETE'])
+@permission_classes((IsAuthenticated, ))
+def event_detail(request, pk):
+    try:
+        event = Event.objects.get(pk=pk)
+        user = request.user
+        if user != event.car.user:
+            return Response({'response':'You dont have a permission to acess this car!'})
+
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = EventSerializer(car)
+        return Response(serializer.data)
+
+    elif request.method == 'DELETE':
+        event.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class MyUploadView(viewsets.GenericViewSet):
+    parsers = (MultiPartParser,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CarImgSerializer
+    queryset = ''
+    @swagger_auto_schema(operation_description='POST Image to the car')
+    @action(detail=True, methods = ['post'], parser_classes=(MultiPartParser,))
+    def create(self, request, pk):
+        car = Car.objects.get(pk=pk)
+        # img = CarImages(car=car)
+        serializer = CarImgSerializer(car, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
