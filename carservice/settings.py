@@ -19,7 +19,7 @@ MEDIA_URL = '/media/'
 
 #Email Backend
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.google.com'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'autoervice2020@gmail.com'
 EMAIL_HOST_PASSWORD = 'Behappy7+'
@@ -164,8 +164,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-#ALLOWED_HOSTS = ['185.116.194.41']
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['185.116.194.41']
+#ALLOWED_HOSTS = ['127.0.0.1']
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = 'home'
