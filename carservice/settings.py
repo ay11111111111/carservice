@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     'smart_selects',
     'datetime',
     'fcm_django',
-
+    'django_filters',
 ]
 
 USE_DJANGO_JQUERY = True
@@ -73,6 +73,7 @@ REST_FRAMEWORK = {
   'DEFAULT_PERMISSION_CLASSES': (
       'rest_framework.permissions.AllowAny',
   ),
+  'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 SWAGGER_SETTINGS = {

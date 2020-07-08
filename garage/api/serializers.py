@@ -60,4 +60,4 @@ class CarImgSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CarImages
-        fields = ('image', )
+        fields = ('id', 'image')
