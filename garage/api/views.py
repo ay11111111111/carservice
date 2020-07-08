@@ -1,14 +1,17 @@
 from ..models import Car, Event, CarModel, CarBrand
 from .serializers import *
+from .filters import EventFilter
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes, action
+# from rest_framework.decorators import detail_route
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from django.contrib.auth.models import User
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from drf_yasg import openapi
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 @swagger_auto_schema(method='get', operation_description="GET list of cars")
@@ -18,24 +21,6 @@ def car_list(request):
     user = request.user
     cars = user.car_set
     serializer = CarSerializer(cars, many=True)
-    return Response(serializer.data)
-
-
-@swagger_auto_schema(method='get', operation_description="GET list of events for car (id)")
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
-def event_list(request, pk):
-    try:
-        car = Car.objects.get(pk=pk)
-        user = request.user
-        if user != car.user:
-            return Response({'response':'You dont have a permission to update this car!'})
-
-    except:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    events = car.event_set
-    serializer = EventSerializer(events, many=True)
     return Response(serializer.data)
 
 
@@ -122,6 +107,37 @@ def car_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class EventView(ListAPIView):
+    serializer_class = EventSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = EventFilter
+
+    # @swagger_auto_schema(method='get', operation_description='GET list of events of car_id')
+    # @action(detail=True, methods=['get',])
+    # def get_list(self, request, pk):
+    #     try:
+    #         car = Car.objects.get(pk=pk)
+    #         user = request.user
+    #         if user != car.user:
+    #             return Response({'response':'You dont have a permission to update this car!'})
+    #
+    #     except:
+    #         return Response(status=status.HTTP_404_NOT_FOUND)
+    #
+    #     events = car.event_set
+    #     serializer = EventSerializer(events, many=True)
+    #     return Response(serializer.data)
+
+    def get_queryset(self):
+
+        car = Car.objects.get(pk=self.kwargs['pk'])
+        queryset = car.event_set
+        queryset = queryset.filter(car__user=self.request.user)
+
+        return queryset
+
+
 @swagger_auto_schema(method='post', request_body=ServiceEventSerializer)
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
@@ -133,6 +149,8 @@ def service_event_create(request, pk):
         data = {}
         if serializer.is_valid():
             serializer.save()
+            car.probeg = serializer.data['probeg']
+            car.save()
             data['response'] = 'successfully registered new service event'
         else:
             data = serializer.errors
@@ -150,6 +168,8 @@ def other_event_create(request, pk):
         data = {}
         if serializer.is_valid():
             serializer.save()
+            car.probeg = serializer.data['probeg']
+            car.save()
             data['response'] = 'successfully registered new other event'
         else:
             data = serializer.errors
@@ -167,6 +187,8 @@ def zapravka_event_create(request, pk):
         data = {}
         if serializer.is_valid():
             serializer.save()
+            car.probeg = serializer.data['probeg']
+            car.save()
             data['response'] = 'successfully registered new zapravka event'
         else:
             data = serializer.errors
@@ -201,12 +223,13 @@ class MyUploadView(viewsets.GenericViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = CarImgSerializer
     queryset = ''
-    @swagger_auto_schema(operation_description='POST Image to the car')
-    @action(detail=True, methods = ['post'], parser_classes=(MultiPartParser,))
+
+    @swagger_auto_schema(method='post', operation_description='POST Image to the car')
+    @action(detail=True, methods=['post',], parser_classes=(MultiPartParser,))
     def create(self, request, pk):
         car = Car.objects.get(pk=pk)
-        # img = CarImages(car=car)
-        serializer = CarImgSerializer(car, data=request.data)
+        img = CarImages(car=car)
+        serializer = self.serializer_class(car, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
