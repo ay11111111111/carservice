@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Car, CarBrand, CarModel, Event, CarImages
+from .models import Car, CarBrand, CarModel, Event, CarImages, CalendarEvent, Fuel
 
 
 class CarModelAdmin(admin.ModelAdmin):
@@ -15,8 +15,13 @@ class CarAdmin(admin.ModelAdmin):
 class EventAdmin(admin.ModelAdmin):
     list_display = ['car', 'type', 'type_of_fuel', 'amount_of_fuel', 'name', 'money', 'probeg', 'comment', 'date']
 
+class FuelAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
+
 admin.site.register(CarBrand)
 admin.site.register(CarModel, CarModelAdmin)
 admin.site.register(Car, CarAdmin)
 admin.site.register(CarImages)
+admin.site.register(Fuel, FuelAdmin)
 admin.site.register(Event, EventAdmin)
+admin.site.register(CalendarEvent)

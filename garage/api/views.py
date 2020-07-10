@@ -1,15 +1,15 @@
-from ..models import Car, Event, CarModel, CarBrand
+from ..models import Car, Event, CarModel, CarBrand, CalendarEvent, Fuel
 from .serializers import *
-from .filters import EventFilter
+from .filters import EventFilter, CalendarEventFilter
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes, action
-# from rest_framework.decorators import detail_route
-from rest_framework.parsers import MultiPartParser, FileUploadParser
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from django.contrib.auth.models import User
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.views import APIView
 from drf_yasg import openapi
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -106,6 +106,38 @@ def car_detail(request, pk):
         car.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class CalendarEventView(viewsets.GenericViewSet):
+    serializer_class = CalendarEventSerializer
+    permission_classes = (IsAuthenticated,)
+    # queryset = ''
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_class = CalendarEventFilter
+
+    def create(self, request, pk, format=None):
+        car = Car.objects.get(pk=pk)
+        calendarevent = CalendarEvent(car=car)
+        serializer = self.serializer_class(calendarevent, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class CalEventView(ListAPIView):
+    serializer_class = CalendarEventSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CalendarEventFilter
+
+    def get_queryset(self):
+        car = Car.objects.get(pk=self.kwargs['pk'])
+        queryset = car.calendarevent_set
+        queryset = queryset.filter(car__user=self.request.user)
+
+        return queryset
 
 class EventView(ListAPIView):
     serializer_class = EventSerializer
@@ -113,30 +145,18 @@ class EventView(ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = EventFilter
 
-    # @swagger_auto_schema(method='get', operation_description='GET list of events of car_id')
-    # @action(detail=True, methods=['get',])
-    # def get_list(self, request, pk):
-    #     try:
-    #         car = Car.objects.get(pk=pk)
-    #         user = request.user
-    #         if user != car.user:
-    #             return Response({'response':'You dont have a permission to update this car!'})
-    #
-    #     except:
-    #         return Response(status=status.HTTP_404_NOT_FOUND)
-    #
-    #     events = car.event_set
-    #     serializer = EventSerializer(events, many=True)
-    #     return Response(serializer.data)
-
     def get_queryset(self):
-
         car = Car.objects.get(pk=self.kwargs['pk'])
         queryset = car.event_set
         queryset = queryset.filter(car__user=self.request.user)
 
         return queryset
 
+
+class FuelView(ListAPIView):
+    serializer_class = FuelSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Fuel.objects.all()
 
 @swagger_auto_schema(method='post', request_body=ServiceEventSerializer)
 @api_view(['POST'])
@@ -187,7 +207,10 @@ def zapravka_event_create(request, pk):
         data = {}
         if serializer.is_valid():
             serializer.save()
+            current_amount_of_fuel = serializer.data['current_amount_of_fuel'] + serializer.data['amount_of_fuel']
+            car.rashod_topliva = (current_amount_of_fuel - car.current_vol)//(serializer.data['probeg'] - car.probeg)
             car.probeg = serializer.data['probeg']
+            car.current_vol = current_amount_of_fuel
             car.save()
             data['response'] = 'successfully registered new zapravka event'
         else:
@@ -218,20 +241,28 @@ def event_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class MyUploadView(viewsets.GenericViewSet):
-    parsers = (MultiPartParser,)
+class MyUploadView(APIView):
+    parsers = (FileUploadParser,)
     permission_classes = (IsAuthenticated,)
     serializer_class = CarImgSerializer
-    queryset = ''
+    # queryset = ''
 
-    @swagger_auto_schema(method='post', operation_description='POST Image to the car')
-    @action(detail=True, methods=['post',], parser_classes=(MultiPartParser,))
-    def create(self, request, pk):
+    # @swagger_auto_schema(method='post', operation_description='POST Image to the car')
+    # @action(detail=True, methods=['post',], parser_classes=(MultiPartParser,))
+    def create(self, request, pk, format=None):
         car = Car.objects.get(pk=pk)
         img = CarImages(car=car)
-        serializer = self.serializer_class(car, data=request.data)
+        serializer = self.serializer_class(img, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@swagger_auto_schema(method='get', operation_description="GET list of fuels")
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def fuel_list(request):
+    serializer = FuelChoiceSerializer()
+    return Response(serializer.data)

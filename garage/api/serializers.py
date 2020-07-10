@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Car, CustomUser, Event, CarModel, CarBrand, CarImages
+from ..models import Car, CustomUser, Event, CarModel, CarBrand, CarImages, CalendarEvent, Fuel
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,7 +32,7 @@ class ZapravkaEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ('id', 'type_of_fuel', 'amount_of_fuel', 'money', 'probeg', 'comment', 'date')
+        fields = ('id', 'type_of_fuel', 'current_amount_of_fuel', 'amount_of_fuel', 'money', 'probeg', 'comment', 'date')
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -41,6 +41,11 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = '__all__'
 
+class CalendarEventSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CalendarEvent
+        fields = ('id', 'name', 'place', 'date')
 
 class CarBrandSerializer(serializers.ModelSerializer):
 
@@ -57,7 +62,14 @@ class CarModelSerializer(serializers.ModelSerializer):
 
 
 class CarImgSerializer(serializers.ModelSerializer):
-
+    # image = serializers.ImageField()
     class Meta:
         model = CarImages
         fields = ('id', 'image')
+
+
+class FuelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Fuel
+        fields = ('id', 'name')

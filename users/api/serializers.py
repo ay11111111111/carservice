@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import CustomUser
+from ..models import CustomUser, TechSupport
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import authenticate
 
@@ -89,3 +89,9 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('name_surname', 'phone_number')
+
+class TechSupportSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TechSupport
+        fields = ('email', 'phone_number', 'message')
