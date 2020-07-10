@@ -133,6 +133,20 @@ class NewPassword(GenericViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class TechSupportView(GenericViewSet):
+    serializer_class = TechSupportSerializer
+    permission_classes = (IsAuthenticated, )
+
+    @swagger_auto_schema(operation_description="Tech Support",
+                responses={400: 'Bad request body', 200:'Success'})
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class ForgotPassword(GenericViewSet):
     serializer_class = ForgotPasswordSerializer

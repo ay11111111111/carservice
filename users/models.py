@@ -67,3 +67,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+class TechSupport(models.Model):
+	email = models.EmailField(verbose_name="email", max_length=60, unique=True)
+	phone_number = models.CharField(max_length=200, blank=True, null=True)
+	message = models.TextField()
