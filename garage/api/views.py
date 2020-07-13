@@ -229,18 +229,18 @@ def event_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class MyUploadView(APIView):
-    parsers = (FileUploadParser,)
+class MyUploadView(viewsets.GenericViewSet):
+    parser_classes = (MultiPartParser,)
     permission_classes = (IsAuthenticated,)
     serializer_class = CarImgSerializer
     # queryset = ''
 
-    # @swagger_auto_schema(method='post', operation_description='POST Image to the car')
-    # @action(detail=True, methods=['post',], parser_classes=(MultiPartParser,))
+    @swagger_auto_schema(method='post', operation_description='POST Image to the car')
+    @action(detail=True, methods=['post',], parser_classes=(MultiPartParser,))
     def create(self, request, pk, format=None):
         car = Car.objects.get(pk=pk)
         img = CarImages(car=car)
-        serializer = self.serializer_class(img, data=request.data)
+        serializer = self.serializer_class(img, data=request.data, context={"request":request})
 
         if serializer.is_valid():
             serializer.save()

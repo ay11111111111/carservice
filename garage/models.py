@@ -121,7 +121,7 @@ class Event(models.Model):
     probeg = models.IntegerField(verbose_name="Пробег")
     comment = models.CharField(max_length=200, verbose_name='Комментарий', blank=True)
     date = models.DateTimeField(default=dt.now, blank=True, verbose_name='Дата и время')
-    # date = UnixDateTimeField()
+    #date = UnixDateTimeField()
 
 class CalendarEvent(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='Машина')
