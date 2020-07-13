@@ -5,6 +5,7 @@ import datetime, os, json
 from django.urls import reverse
 from smart_selects.db_fields import ChainedForeignKey
 from datetime import datetime as dt
+from django_unixdatetimefield import UnixDateTimeField
 
 def year_choices():
     return [(r,r) for r in range(1984, datetime.date.today().year+1)]
@@ -120,10 +121,11 @@ class Event(models.Model):
     probeg = models.IntegerField(verbose_name="Пробег")
     comment = models.CharField(max_length=200, verbose_name='Комментарий', blank=True)
     date = models.DateTimeField(default=dt.now, blank=True, verbose_name='Дата и время')
-
+    # date = UnixDateTimeField()
 
 class CalendarEvent(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='Машина')
     name = models.CharField(max_length=200, verbose_name='Название')
     place = models.CharField(max_length=200, verbose_name='Место')
     date = models.DateField(verbose_name='Дата')
+    # date = UnixDateTimeField()

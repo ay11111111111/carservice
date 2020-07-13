@@ -62,7 +62,7 @@ class CarModelSerializer(serializers.ModelSerializer):
 
 
 class CarImgSerializer(serializers.ModelSerializer):
-    # image = serializers.ImageField()
+
     class Meta:
         model = CarImages
         fields = ('id', 'image')

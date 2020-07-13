@@ -179,7 +179,7 @@ class ForgotPassword(GenericViewSet):
                     # msg.send()
                     return Response({'message': 'Success'}, status=status.HTTP_200_OK)
                 return Response({'message': 'Not active'}, status=status.HTTP_404_NOT_FOUND)
-            except User.DoesNotExist:
-                return Response({'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+            except:
+                return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

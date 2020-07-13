@@ -12,7 +12,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.views import APIView
 from drf_yasg import openapi
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.db.models.query import Q
 
 @swagger_auto_schema(method='get', operation_description="GET list of cars")
 @api_view(['GET'])
@@ -109,9 +109,6 @@ def car_detail(request, pk):
 class CalendarEventView(viewsets.GenericViewSet):
     serializer_class = CalendarEventSerializer
     permission_classes = (IsAuthenticated,)
-    # queryset = ''
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_class = CalendarEventFilter
 
     def create(self, request, pk, format=None):
         car = Car.objects.get(pk=pk)
@@ -123,21 +120,12 @@ class CalendarEventView(viewsets.GenericViewSet):
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def get_list(self, request, format=None):
+        user = request.user
+        calendarevents = CalendarEvent.objects.filter(car__user = user)
+        serializer = self.serializer_class(calendarevents, many=True)
+        return Response(data = serializer.data, status=status.HTTP_200_OK)
 
-
-
-class CalEventView(ListAPIView):
-    serializer_class = CalendarEventSerializer
-    permission_classes = (IsAuthenticated,)
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = CalendarEventFilter
-
-    def get_queryset(self):
-        car = Car.objects.get(pk=self.kwargs['pk'])
-        queryset = car.calendarevent_set
-        queryset = queryset.filter(car__user=self.request.user)
-
-        return queryset
 
 class EventView(ListAPIView):
     serializer_class = EventSerializer

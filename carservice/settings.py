@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'garage.apps.GarageConfig',
     'notification.apps.NotificationConfig',
+    'repair.apps.RepairConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,6 +62,7 @@ INSTALLED_APPS = [
     'datetime',
     'fcm_django',
     'django_filters',
+    'django_unixdatetimefield',
 ]
 
 USE_DJANGO_JQUERY = True
