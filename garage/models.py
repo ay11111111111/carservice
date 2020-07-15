@@ -6,6 +6,8 @@ from django.urls import reverse
 from smart_selects.db_fields import ChainedForeignKey
 from datetime import datetime as dt
 from django_unixdatetimefield import UnixDateTimeField
+from carservice.settings import MEDIA_ROOT
+
 
 def year_choices():
     return [(r,r) for r in range(1984, datetime.date.today().year+1)]
@@ -94,8 +96,8 @@ class CarImages(models.Model):
     image = models.FileField(upload_to='images/', verbose_name='Image')
 
     def __str__(self):
-        return self.car.user.email + '\'s ' + self.car.car_marka.name + ' ' + self.car.car_model.name
-
+        #return self.car.user.email + '\'s ' + self.car.car_marka.name + ' ' + self.car.car_model.name
+        return str(MEDIA_ROOT) + '/' + str(self.image)
 
 class Fuel(models.Model):
     name = models.CharField(max_length=200)
