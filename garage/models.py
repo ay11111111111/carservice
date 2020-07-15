@@ -127,5 +127,5 @@ class CalendarEvent(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='Машина')
     name = models.CharField(max_length=200, verbose_name='Название')
     place = models.CharField(max_length=200, verbose_name='Место')
-    date = models.DateField(verbose_name='Дата')
+    date = models.DateTimeField(verbose_name='Дата')
     # date = UnixDateTimeField()
