@@ -20,7 +20,7 @@ from django.db.models.query import Q
 def car_list(request):
     user = request.user
     cars = user.car_set
-    serializer = CarSerializer(cars, many=True)
+    serializer = CarSerializer(cars, many=True, context={"request": request})
     return Response(serializer.data)
 
 
@@ -41,14 +41,14 @@ def carbrand_list(request):
     return Response(serializer.data)
 
 
-@swagger_auto_schema(method='post', request_body=CarSerializer)
+@swagger_auto_schema(method='post', request_body=CarCreateSerializer)
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
 def car_create(request):
     user = request.user
     car = Car(user=user)
     if request.method == 'POST':
-        serializer = CarSerializer(car, data=request.data)
+        serializer = CarCreateSerializer(car, data=request.data)
         data = {}
         if serializer.is_valid():
             car = serializer.save()
@@ -110,9 +110,9 @@ class CalendarEventView(viewsets.GenericViewSet):
     serializer_class = CalendarEventSerializer
     permission_classes = (IsAuthenticated,)
 
-    def create(self, request, pk, format=None):
-        car = Car.objects.get(pk=pk)
-        calendarevent = CalendarEvent(car=car)
+    def create(self, request, format=None):
+        user = request.user
+        calendarevent = CalendarEvent(user=user)
         serializer = self.serializer_class(calendarevent, data=request.data)
 
         if serializer.is_valid():

@@ -16,7 +16,7 @@ urlpatterns = [
     path('<int:pk>/create-service-event', views.service_event_create, name='service'),
     path('<int:pk>/create-zapravka-event', views.zapravka_event_create, name='zapravka'),
     path('<int:pk>/create-other-event', views.other_event_create, name='other'),
-    path('<int:pk>/create-calendar-event', views.CalendarEventView.as_view({'post':'create'}), name='other'),
+    path('create-calendar-event', views.CalendarEventView.as_view({'post':'create'}), name='other'),
     path('calendarevents', views.CalendarEventView.as_view({'get':'get_list'}), name='other'),
 ]
 
