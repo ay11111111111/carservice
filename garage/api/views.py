@@ -195,10 +195,9 @@ def zapravka_event_create(request, pk):
         data = {}
         if serializer.is_valid():
             serializer.save()
-            current_amount_of_fuel = serializer.data['current_amount_of_fuel'] + serializer.data['amount_of_fuel']
-            car.rashod_topliva = (current_amount_of_fuel - car.current_vol)//(serializer.data['probeg'] - car.probeg)
+            car.rashod_topliva = (car.current_vol)*100//(serializer.data['probeg'] - car.probeg)
             car.probeg = serializer.data['probeg']
-            car.current_vol = current_amount_of_fuel
+            car.current_vol = serializer.data['amount_of_fuel']
             car.save()
             data['response'] = 'successfully registered new zapravka event'
         else:

@@ -51,7 +51,7 @@ class ZapravkaEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ('id', 'type_of_fuel', 'current_amount_of_fuel', 'amount_of_fuel', 'money', 'probeg', 'comment', 'date')
+        fields = ('id', 'type_of_fuel', 'amount_of_fuel', 'money', 'probeg', 'comment', 'date')
 
 
 class EventSerializer(serializers.ModelSerializer):

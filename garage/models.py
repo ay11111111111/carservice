@@ -117,7 +117,7 @@ class Event(models.Model):
     type = models.CharField(max_length=60, choices=EVENT_CHOICES, verbose_name='Тип')
     type_of_fuel = models.ForeignKey(Fuel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Вид топлива')
     amount_of_fuel = models.IntegerField(blank=True, default=0, verbose_name='Количество л.')
-    current_amount_of_fuel = models.IntegerField(blank=True, default=0, verbose_name='Текущее кол-во топлива')
+    # current_amount_of_fuel = models.IntegerField(blank=True, default=0, verbose_name='Текущее кол-во топлива')
     name = models.CharField(max_length=100, verbose_name='Название', blank=True)
     money = models.IntegerField(verbose_name='Сумма')
     probeg = models.IntegerField(verbose_name="Пробег")
