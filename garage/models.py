@@ -92,8 +92,8 @@ class Car(models.Model):
 
 
 class CarImages(models.Model):
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    image = models.FileField(upload_to='images/', verbose_name='Image')
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='carimagess')
+    image = models.ImageField(upload_to='images/', verbose_name='Image')
 
     def __str__(self):
         #return self.car.user.email + '\'s ' + self.car.car_marka.name + ' ' + self.car.car_model.name
@@ -126,8 +126,11 @@ class Event(models.Model):
     #date = UnixDateTimeField()
 
 class CalendarEvent(models.Model):
-    car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='Машина')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, verbose_name='Название')
     place = models.CharField(max_length=200, verbose_name='Место')
     date = models.DateTimeField(verbose_name='Дата')
     # date = UnixDateTimeField()
+
+    def __str__(self):
+        return self.name

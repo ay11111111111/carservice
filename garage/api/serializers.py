@@ -15,20 +15,30 @@ class CarImgSerializer(serializers.ModelSerializer):
         fields = ('id', 'image')
 
 
-class CarSerializer(serializers.ModelSerializer):
+class CarCreateSerializer(serializers.ModelSerializer):
     user = UserSerializer
     title = serializers.SerializerMethodField('get_title')
-    # images = serializers.SerializerMethodField('get_images')
-    images = serializers.StringRelatedField(source='carimages_set', many=True, read_only=True)
-    #images = CarImgSerializer(many=True, read_only=True)
 
     def get_title(self,obj):
         return obj.car_marka.name + ' ' + obj.car_model.name
 
     class Meta:
         model = Car
-        fields = ('id', 'car_marka', 'car_model', 'title', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg', 'rashod_topliva', 'images')
-        depth = 1
+        fields = ('id', 'car_marka', 'car_model', 'title', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg', 'rashod_topliva')
+
+
+class CarSerializer(serializers.ModelSerializer):
+    user = UserSerializer
+    title = serializers.SerializerMethodField('get_title')
+    carimagess = CarImgSerializer(many=True, read_only=True)
+
+    def get_title(self,obj):
+        return obj.car_marka.name + ' ' + obj.car_model.name
+
+    class Meta:
+        model = Car
+        fields = ('id', 'car_marka', 'car_model', 'title', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg', 'rashod_topliva', 'carimagess')
+        depth = 2
 
 class ServiceEventSerializer(serializers.ModelSerializer):
 

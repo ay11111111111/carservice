@@ -18,10 +18,13 @@ class EventAdmin(admin.ModelAdmin):
 class FuelAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
 
+class CalendarEventAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'name', 'place', 'date']
+
 admin.site.register(CarBrand)
 admin.site.register(CarModel, CarModelAdmin)
 admin.site.register(Car, CarAdmin)
 admin.site.register(CarImages)
 admin.site.register(Fuel, FuelAdmin)
 admin.site.register(Event, EventAdmin)
-admin.site.register(CalendarEvent)
+admin.site.register(CalendarEvent, CalendarEventAdmin)
