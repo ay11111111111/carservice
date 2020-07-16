@@ -65,6 +65,19 @@ INSTALLED_APPS = [
     'django_unixdatetimefield',
 ]
 
+FCM_DJANGO_SETTINGS = {
+        "APP_VERBOSE_NAME": "Notification",
+         # default: _('FCM Django')
+        "FCM_SERVER_KEY": "AAAA1pdV3MY:APA91bHrXzsPeFE3gDJ5x_dV0RL__wiT9DhhEYIu87yzOJ8uXQEmbYfralqVH7uIKd5DSKAnwmWf0AQc7plEclQK3xdfzbuvjIYpW8X6vdLxV_Af8KnvYiNZtjCaM4l7EdogH0rEKNpR",
+         # true if you want to have only one active device per registered user at a time
+         # default: False
+        "ONE_DEVICE_PER_USER": False,
+         # devices to which notifications cannot be sent,
+         # are deleted upon receiving error response from FCM
+         # default: False
+        "DELETE_INACTIVE_DEVICES": False,
+}
+
 USE_DJANGO_JQUERY = True
 
 REST_FRAMEWORK = {
@@ -172,8 +185,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-ALLOWED_HOSTS = ['185.116.194.41']
-#ALLOWED_HOSTS = ['127.0.0.1']
+#ALLOWED_HOSTS = ['185.116.194.41']
+ALLOWED_HOSTS = ['127.0.0.1']
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = 'home'

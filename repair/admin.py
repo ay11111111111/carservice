@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Service, CTO, Review, Appointment, TimeSlot
+from .models import Service, CTO, Review, Appointment, TimeSlot, AutoserviceType
 import datetime
 import calendar
 from calendar import HTMLCalendar
@@ -45,8 +45,12 @@ class AppointmentAdmin(admin.ModelAdmin):
         return super(AppointmentAdmin, self).changelist_view(request, extra_context)
 
 
+class AutoserviceTypeAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
+
 admin.site.register(Service)
 admin.site.register(CTO)
 admin.site.register(Review)
 admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(TimeSlot)
+admin.site.register(AutoserviceType, AutoserviceTypeAdmin)

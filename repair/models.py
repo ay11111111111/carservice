@@ -9,9 +9,15 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
+class AutoserviceType(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 class CTO(models.Model):
     name = models.CharField(max_length=255)
+    type = models.ForeignKey(AutoserviceType, on_delete=models.CASCADE, blank=True, null=True)
     email = models.EmailField(verbose_name="email", max_length=60, unique=True, default='')
     address = models.CharField(max_length=255)
     rating = models.DecimalField(blank=True, default=0, max_digits=10, decimal_places=1)
@@ -20,8 +26,12 @@ class CTO(models.Model):
     cars_per_timeslot = models.IntegerField(default=1)
     morning_bound_workday = models.TimeField(default='9:00')
     evening_bound_workday = models.TimeField(default='20:00')
-    morning_bound_weekday = models.TimeField(default='9:00')
-    evening_bound_weekday = models.TimeField(default='20:00')
+    lunch_from = models.TimeField(default='13:00')
+    lunch_to = models.TimeField(default='14:00')
+    morning_bound_saturday = models.TimeField(default='9:00')
+    evening_bound_saturday = models.TimeField(default='20:00')
+    morning_bound_sunday = models.TimeField(default='9:00')
+    evening_bound_sunday = models.TimeField(default='20:00')
 
 
     def __str__(self):
