@@ -122,7 +122,7 @@ class CalendarEventView(viewsets.GenericViewSet):
 
     def get_list(self, request, format=None):
         user = request.user
-        calendarevents = CalendarEvent.objects.filter(car__user = user)
+        calendarevents = CalendarEvent.objects.filter(user = user)
         serializer = self.serializer_class(calendarevents, many=True)
         return Response(data = serializer.data, status=status.HTTP_200_OK)
 
