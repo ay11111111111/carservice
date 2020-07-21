@@ -22,7 +22,7 @@ class CTO(models.Model):
     address = models.CharField(max_length=255)
     rating = models.DecimalField(blank=True, default=0, max_digits=10, decimal_places=1)
     phone_number = models.CharField(max_length=200, blank=True, null=True)
-    services = models.ManyToManyField(Service)
+    services = models.ManyToManyField(Service, related_name='services')
     cars_per_timeslot = models.IntegerField(default=1)
     morning_bound_workday = models.TimeField(default='9:00')
     evening_bound_workday = models.TimeField(default='20:00')
@@ -32,7 +32,7 @@ class CTO(models.Model):
     evening_bound_saturday = models.TimeField(default='20:00')
     morning_bound_sunday = models.TimeField(default='9:00')
     evening_bound_sunday = models.TimeField(default='20:00')
-
+    image = models.ImageField(upload_to='autoservices/', verbose_name='Image')
 
     def __str__(self):
         return self.name

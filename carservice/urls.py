@@ -58,6 +58,7 @@ urlpatterns = [
     path('carservice/api/v1/auth/', include('users.api.urls')),
     path('carservice/api/v1/cars/', include('garage.api.urls')),
     path('carservice/api/v1/notification/', include('notification.api.urls')),
+    path('carservice/api/v1/repair/', include('repair.api.urls')),
     url(r'^chaining/', include('smart_selects.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
