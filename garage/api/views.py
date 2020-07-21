@@ -12,7 +12,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.views import APIView
 from drf_yasg import openapi
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models.query import Q
+from django.db.models import Q
 
 @swagger_auto_schema(method='get', operation_description="GET list of cars")
 @api_view(['GET'])
