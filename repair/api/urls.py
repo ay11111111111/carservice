@@ -15,4 +15,5 @@ urlpatterns = [
     path('autoservices', views.AutoServiceFilteredView.as_view({'post':'post'})),
     path('autoservices/<int:pk>', views.AutoServiceOneView.as_view({'get':'get'})),
     path('reviews/create', views.ReviewCreateView.as_view({'post':'create'})),
+    path('autoservices/<int:pk>/freeslots', views.FreeSlotsView.as_view({'get':'get'})),
 ]

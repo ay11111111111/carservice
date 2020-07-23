@@ -1,4 +1,4 @@
-from ..models import Service, AutoService, Review
+from ..models import Service, AutoService, Appointment, OpeningHours
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status, viewsets
@@ -14,7 +14,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .filters import AutoServiceFilter
 from django.utils.decorators import method_decorator
 from django.db.models import Q
-
+import datetime
 
 class FuelView(ListAPIView):
     serializer_class = ServiceSerializer
@@ -85,4 +85,64 @@ class ReviewCreateView(viewsets.GenericViewSet):
         else:
             data = serializer.errors
 
+        return Response(data)
+
+def get_free_times(date, autoservice):
+    appointments = Appointment.objects.filter(autoservice=autoservice, date=date)
+    weekday = date.weekday() + 1
+    openinghours = OpeningHours.objects.get(autoservice=autoservice, weekday=weekday)
+    if openinghours.working:
+        return []
+
+class FreeSlotsView(viewsets.GenericViewSet):
+    # permission_classes = (AllowAny,)
+    serializer_class = FreeSlotsSerializer
+
+    def get(self, request, pk, format=None):
+        autoservice = AutoService.objects.get(pk=pk)
+        datenow = datetime.date.today()
+        #date = datetime.date.today()+datetime.timedelta(days=i)
+        data = []
+        for i in range(4):
+            date = datetime.date.today()+datetime.timedelta(days=i)
+            times = get_free_times(date, autoservice)
+            data.append({"date":date})
+        hz = [
+              {
+                "date":"01.05.2020",
+                "times":[
+                  "10:00",
+                  "11:00",
+                  "16:00",
+                  "22:00"
+                ]
+              },
+              {
+                "date":"02.05.2020",
+                "times":[
+                  "10:00",
+                  "11:00",
+                  "16:00",
+                  "22:00"
+                ]
+              },
+              {
+                "date":"03.05.2020",
+                "times":[
+                  "10:00",
+                  "11:00",
+                  "16:00",
+                  "22:00"
+                ]
+              },
+              {
+                "date":"04.05.2020",
+                "times":[
+                  "10:00",
+                  "11:00",
+                  "16:00",
+                  "22:00"
+                ]
+              }
+            ]
         return Response(data)
