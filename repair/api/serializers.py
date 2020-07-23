@@ -48,9 +48,12 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    user_name = serializers.SerializerMethodField()
     class Meta:
         model = Review
-        fields = ['id', 'user', 'description', 'rating', 'date']
+        fields = ['id', 'user_name', 'description', 'rating', 'date']
+    def get_user_name(self, obj):
+        return obj.user.name_surname
 
 class ReviewCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -69,3 +72,8 @@ class OneAutoServiceSerializer(serializers.ModelSerializer):
 
     def get_today_weekday(self, obj):
         return get_weekday(datetime.date.today().weekday())
+
+
+class FreeSlotsSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    times = serializers.ListField(child=serializers.TimeField())

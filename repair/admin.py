@@ -25,7 +25,7 @@ class AutoServiceAdmin(admin.ModelAdmin):
     form = AutoServiceForm
 
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ['user', 'autoservice', 'date', 'timeslot']
+    list_display = ['user', 'autoservice', 'date', 'start_time']
 
 class AutoserviceTypeAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
