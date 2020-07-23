@@ -2,7 +2,6 @@ from django.urls import path, include
 from . import views
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from .serializers import CTOSerializer
 
 # decorated_cto_view = \
 #    swagger_auto_schema(
@@ -13,5 +12,7 @@ from .serializers import CTOSerializer
 
 urlpatterns = [
     path('services', views.FuelView.as_view()),
-    path('autoservices', views.CTOfilteredView.as_view({'post':'post'})),
+    path('autoservices', views.AutoServiceFilteredView.as_view({'post':'post'})),
+    path('autoservices/<int:pk>', views.AutoServiceOneView.as_view({'get':'get'})),
+    path('reviews/create', views.ReviewCreateView.as_view({'post':'create'})),
 ]
