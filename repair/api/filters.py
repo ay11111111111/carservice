@@ -1,5 +1,5 @@
 import django_filters
-from ..models import CTO, Service
+from ..models import AutoService, Service
 from django_filters import Filter, FilterSet
 from django_filters.fields import Lookup
 from django.db.models import Q
@@ -20,16 +20,13 @@ class ListFilter(Filter):
 
 
 
-class CtoFilter(django_filters.FilterSet):
+class AutoServiceFilter(django_filters.FilterSet):
     services_id = django_filters.filters.ModelMultipleChoiceFilter(
         field_name='services__id',
         to_field_name='id',
         queryset=Service.objects.all(),
         conjoined=True
     )
-    # services_in = NumberInFilter(field_name='services', lookup_expr='in')
-
-    # services_id = ListFilter('services__id')
     class Meta:
-        model = CTO
+        model = AutoService
         fields = ('services_id',)
