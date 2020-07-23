@@ -51,34 +51,34 @@ class AutoService(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self,*args,**kwargs):
-        created = not self.pk
-        super().save(*args,**kwargs)
-        if created:
-            TimeSlot.objects.create(autoservice=self, date=datetime.date.today(), start_time='9:00', end_time='10:00', available=self.cars_per_timeslot)
-            for i in range(14):
-                date = datetime.date.today()+datetime.timedelta(days=i)
-                if date.weekday() < 5:
-                    from_time = self.morning_bound_workday.hour
-                    to_time = self.evening_bound_workday.hour
-                    lunch_time = self.lunch_from.hour
-                    for j in range(from_time, to_time):
-                        if j != lunch_time:
-                            TimeSlot.objects.create(autoservice=self, date=date, start_time=time(j,0), end_time=time(j+1,0), available=self.cars_per_timeslot)
-                if date.weekday() == 5:
-                    from_time = self.morning_bound_saturday.hour
-                    to_time = self.evening_bound_saturday.hour
-                    lunch_time = self.lunch_from.hour
-                    for j in range(from_time, to_time):
-                        if j != lunch_time:
-                            TimeSlot.objects.create(autoservice=self, date=date, start_time=time(j,0), end_time=time(j+1,0), available=self.cars_per_timeslot)
-                if date.weekday() == 6:
-                    from_time = self.morning_bound_sunday.hour
-                    to_time = self.evening_bound_sunday.hour
-                    lunch_time = self.lunch_from.hour
-                    for j in range(from_time, to_time):
-                        if j != lunch_time:
-                            TimeSlot.objects.create(autoservice=self, date=date, start_time=time(j,0), end_time=time(j+1,0), available=self.cars_per_timeslot)
+    # def save(self,*args,**kwargs):
+    #     created = not self.pk
+    #     super().save(*args,**kwargs)
+    #     if created:
+    #         TimeSlot.objects.create(autoservice=self, date=datetime.date.today(), start_time='9:00', end_time='10:00', available=self.cars_per_timeslot)
+    #         for i in range(14):
+    #             date = datetime.date.today()+datetime.timedelta(days=i)
+    #             if date.weekday() < 5:
+    #                 from_time = self.morning_bound_workday.hour
+    #                 to_time = self.evening_bound_workday.hour
+    #                 lunch_time = self.lunch_from.hour
+    #                 for j in range(from_time, to_time):
+    #                     if j != lunch_time:
+    #                         TimeSlot.objects.create(autoservice=self, date=date, start_time=time(j,0), end_time=time(j+1,0), available=self.cars_per_timeslot)
+    #             if date.weekday() == 5:
+    #                 from_time = self.morning_bound_saturday.hour
+    #                 to_time = self.evening_bound_saturday.hour
+    #                 lunch_time = self.lunch_from.hour
+    #                 for j in range(from_time, to_time):
+    #                     if j != lunch_time:
+    #                         TimeSlot.objects.create(autoservice=self, date=date, start_time=time(j,0), end_time=time(j+1,0), available=self.cars_per_timeslot)
+    #             if date.weekday() == 6:
+    #                 from_time = self.morning_bound_sunday.hour
+    #                 to_time = self.evening_bound_sunday.hour
+    #                 lunch_time = self.lunch_from.hour
+    #                 for j in range(from_time, to_time):
+    #                     if j != lunch_time:
+    #                         TimeSlot.objects.create(autoservice=self, date=date, start_time=time(j,0), end_time=time(j+1,0), available=self.cars_per_timeslot)
 
 
 class Phone(models.Model):
