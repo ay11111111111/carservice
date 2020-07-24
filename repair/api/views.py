@@ -15,6 +15,7 @@ from .filters import AutoServiceFilter
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 import datetime
+from datetime import time
 
 class FuelView(ListAPIView):
     serializer_class = ServiceSerializer
@@ -82,67 +83,68 @@ class ReviewCreateView(viewsets.GenericViewSet):
             data['autoservice'] = review.autoservice.name
             data['description'] = review.description
             data['rating'] = review.rating
+            return Response(data, status=status.HTTP_201_CREATED)
         else:
             data = serializer.errors
-
-        return Response(data)
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
 def get_free_times(date, autoservice):
     appointments = Appointment.objects.filter(autoservice=autoservice, date=date)
     weekday = date.weekday() + 1
     openinghours = OpeningHours.objects.get(autoservice=autoservice, weekday=weekday)
+    free_times = []
+    booked_times = {}
+
+    for appointment in appointments:
+        t = "%d:00" % appointment.start_time.hour
+        if t not in booked_times:
+            booked_times.update({ t : autoservice.cars_per_timeslot-1})
+        else:
+            booked_times[t] -= 1
+
     if openinghours.working:
-        return []
+        for i in range(openinghours.worktime_from.hour, openinghours.worktime_till.hour):
+            t = "%d:00" % i
+            if i != openinghours.lunchtime_from.hour:
+                if t not in booked_times or booked_times[t]>0:
+                    free_times.append(t)
+
+    return free_times
 
 class FreeSlotsView(viewsets.GenericViewSet):
-    # permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = FreeSlotsSerializer
 
     def get(self, request, pk, format=None):
         autoservice = AutoService.objects.get(pk=pk)
         datenow = datetime.date.today()
-        #date = datetime.date.today()+datetime.timedelta(days=i)
         data = []
         for i in range(4):
             date = datetime.date.today()+datetime.timedelta(days=i)
             times = get_free_times(date, autoservice)
-            data.append({"date":date})
-        hz = [
-              {
-                "date":"01.05.2020",
-                "times":[
-                  "10:00",
-                  "11:00",
-                  "16:00",
-                  "22:00"
-                ]
-              },
-              {
-                "date":"02.05.2020",
-                "times":[
-                  "10:00",
-                  "11:00",
-                  "16:00",
-                  "22:00"
-                ]
-              },
-              {
-                "date":"03.05.2020",
-                "times":[
-                  "10:00",
-                  "11:00",
-                  "16:00",
-                  "22:00"
-                ]
-              },
-              {
-                "date":"04.05.2020",
-                "times":[
-                  "10:00",
-                  "11:00",
-                  "16:00",
-                  "22:00"
-                ]
-              }
-            ]
+            data.append({"date":date, 'times':times})
+
         return Response(data)
+
+
+class AppointmentCreateView(viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = AppointmentCreateSerializer
+
+    def create(self, request, format=None):
+        user = request.user
+        appointment = Appointment(user=user)
+        serializer = self.serializer_class(appointment, data=request.data)
+        data = {}
+        if serializer.is_valid():
+            appointment = serializer.save()
+            data['id'] = appointment.id
+            data['response'] = 'successfully created new appointment'
+            data['user'] = appointment.user.name_surname
+            data['autoservice'] = appointment.autoservice.id
+            data['date'] = appointment.date
+            data['start_time'] = appointment.start_time
+            return Response(data, status=status.HTTP_201_CREATED)
+        else:
+            data = serializer.errors
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)

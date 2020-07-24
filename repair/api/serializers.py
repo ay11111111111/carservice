@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Service, AutoserviceType, AutoService, Phone, OpeningHours, Review
+from ..models import Service, AutoserviceType, AutoService, Phone, OpeningHours, Review, Appointment
 import datetime
 
 
@@ -77,3 +77,9 @@ class OneAutoServiceSerializer(serializers.ModelSerializer):
 class FreeSlotsSerializer(serializers.Serializer):
     date = serializers.DateField()
     times = serializers.ListField(child=serializers.TimeField())
+
+
+class AppointmentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ('autoservice', 'services', 'date', 'start_time')
