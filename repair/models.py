@@ -141,13 +141,6 @@ class Appointment(models.Model):
     services = models.ManyToManyField(Service, verbose_name='Услуги')
     autoservice = models.ForeignKey(AutoService, on_delete=models.CASCADE, verbose_name='СТО')
     date = models.DateField(verbose_name='Дата')
-    # timeslot = ChainedForeignKey(TimeSlot,
-    #     chained_field='autoservice',
-    #     chained_model_field='autoservice',
-    #     show_all=True,
-    #     auto_choose=True,
-    #     sort=True
-    # )
     start_time = models.TimeField(default='12:00')
 
     def clean(self):
