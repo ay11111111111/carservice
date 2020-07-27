@@ -71,7 +71,7 @@ class OneAutoServiceSerializer(serializers.ModelSerializer):
         depth = 1
 
     def get_today_weekday(self, obj):
-        return get_weekday(datetime.date.today().weekday())
+        return get_weekday(datetime.date.today().weekday()+1)
 
 
 class FreeSlotsSerializer(serializers.Serializer):
