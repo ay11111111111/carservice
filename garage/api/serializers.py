@@ -37,7 +37,7 @@ class CarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Car
-        fields = ('id', 'car_marka', 'car_model', 'title', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg', 'rashod_topliva', 'carimagess')
+        fields = ('id', 'car_marka', 'car_model', 'title', 'year_of_issue', 'korobka', 'volume_dvigatel', 'probeg', 'rashod_topliva', 'type_of_fuel', 'carimagess')
         depth = 2
 
 class ServiceEventSerializer(serializers.ModelSerializer):
