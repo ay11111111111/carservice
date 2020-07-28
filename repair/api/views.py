@@ -64,6 +64,16 @@ class AutoServiceFilteredView(viewsets.GenericViewSet):
             return Response(data=serializer2.data)
         return Response(serializer.errors)
 
+def AutoServiceRatingRenew(id):
+    autoservice = AutoService.objects.get(id=id)
+    reviews = Review.objects.filter(autoservice=autoservice)
+    count = reviews.count()
+    sum=0
+    for review in reviews:
+        sum += review.rating
+    autoservice.rating = sum/count
+    print(autoservice.rating)
+    autoservice.save()
 
 class ReviewCreateView(viewsets.GenericViewSet):
     permission_classes = (IsAuthenticated,)
@@ -71,7 +81,6 @@ class ReviewCreateView(viewsets.GenericViewSet):
 
     def create(self, request, format=None):
         user = request.user
-        print(user)
         review = Review(user=user)
         serializer = self.serializer_class(review, data=request.data)
         data={}
@@ -83,6 +92,7 @@ class ReviewCreateView(viewsets.GenericViewSet):
             data['autoservice'] = review.autoservice.name
             data['description'] = review.description
             data['rating'] = review.rating
+            AutoServiceRatingRenew(review.autoservice.id)
             return Response(data, status=status.HTTP_201_CREATED)
         else:
             data = serializer.errors
