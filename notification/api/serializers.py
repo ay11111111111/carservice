@@ -42,7 +42,6 @@ class FCMDeviceSerializer(serializers.ModelSerializer):
 def send_to_topic(data, device):
     device.send_message(title=data['title'], body=data['text'], data=data, sound="default")
 
-
 @receiver(post_save, sender=Notification)
 def notification_handler(sender, instance, created, **kwargs):
     if created:

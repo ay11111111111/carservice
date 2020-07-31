@@ -51,7 +51,7 @@ urlpatterns = [
     path('carservice/', include('app.urls')),
     path('carservice/garage/', include('garage.urls')),
     path('carservice/admin/', admin.site.urls),
-    path('carservice/autoserviceadmin', autoserviceadmin.urls),
+    path('carservice/autoservice-admin/', autoserviceadmin.urls),
     path('carservice/register/', user_views.register, name="register"),
     path('carservice/login/', user_views.login_view, name="login"),
     path('carservice/logout/', user_views.logout_view, name="logout"),

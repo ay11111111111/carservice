@@ -1,4 +1,5 @@
 from django.contrib import admin
+from carservice.admin import autoserviceadmin
 from .models import (Service, Phone, AutoService, Review, Appointment, TimeSlot, AutoserviceType,
                     OpeningHours)
 import datetime
@@ -7,6 +8,26 @@ from calendar import HTMLCalendar
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django import forms
+
+
+class StaffRequiredAdminMixin(object):
+
+    def check_perm(self, user_obj):
+        # if not user_obj.is_active or user_obj.is_anonymous:
+        #     return False
+        if user_obj.is_superuser or user_obj.is_staff:
+            return True
+        return False
+
+    def has_add_permission(self, request):
+        return self.check_perm(request.user)
+
+    def has_change_permission(self, request, obj=None):
+        return self.check_perm(request.user)
+
+    def has_delete_permission(self, request, obj=None):
+        return self.check_perm(request.user)
+
 
 class PhoneInline(admin.TabularInline):
     model = Phone
@@ -19,13 +40,38 @@ class AutoServiceForm(forms.ModelForm):
         model = AutoService
         exclude = ['rating']
 
-class AutoServiceAdmin(admin.ModelAdmin):
+class AutoServiceAdmin(StaffRequiredAdminMixin,admin.ModelAdmin):
     inlines = (PhoneInline, OpeningHoursInline)
     list_display = ['name', 'type', 'address', 'email', 'rating']
     form = AutoServiceForm
 
-class AppointmentAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+
+        qs = super(AutoServiceAdmin, self).get_queryset(request)
+        if request.user.is_staff and not request.user.is_superuser:
+            return qs.filter(email=request.user.email)
+        if request.user.is_superuser:
+            return qs
+
+    def save_model(self, request, obj, form, change):
+        # field not editable in admin area so handle it here...
+        # obj.user = request.user
+        obj.save()
+
+class AppointmentAdmin(StaffRequiredAdminMixin,admin.ModelAdmin):
     list_display = ['user', 'autoservice', 'date', 'start_time']
+
+    def get_queryset(self, request):
+        qs = super(AppointmentAdmin, self).get_queryset(request)
+        if request.user.is_staff and not request.user.is_superuser:
+            return qs.filter(autoservice__email=request.user.email)
+        if request.user.is_superuser:
+            return qs
+
+    def save_model(self, request, obj, form, change):
+        # field not editable in admin area so handle it here...
+        # obj.user = request.user
+        obj.save()
 
 class AutoserviceTypeAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
@@ -40,3 +86,5 @@ admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(TimeSlot, TimeSlotAdmin)
 admin.site.register(AutoserviceType, AutoserviceTypeAdmin)
 admin.site.register(OpeningHours)
+
+autoserviceadmin.register(Appointment, AppointmentAdmin)
