@@ -104,7 +104,7 @@ def get_free_times(date, autoservice):
     openinghours = OpeningHours.objects.get(autoservice=autoservice, weekday=weekday)
     free_times = []
     booked_times = {}
-
+    current_hour = datetime.datetime.now().hour
     for appointment in appointments:
         t = "%d:00" % appointment.start_time.hour
         if t not in booked_times:
@@ -115,8 +115,13 @@ def get_free_times(date, autoservice):
     for i in range(openinghours.worktime_from.hour, openinghours.worktime_till.hour):
         t = "%d:00" % i
         if i != openinghours.lunchtime_from.hour:
-            if t not in booked_times or booked_times[t]>0:
-                free_times.append(t)
+            if date == datetime.datetime.today().date():
+                if i > current_hour:
+                    if t not in booked_times or booked_times[t]>0:
+                        free_times.append(t)
+            else:
+                if t not in booked_times or booked_times[t]>0:
+                    free_times.append(t)
 
     return free_times
 
@@ -133,7 +138,8 @@ class FreeSlotsView(viewsets.GenericViewSet):
             date = datetime.date.today()+datetime.timedelta(days=i)
             weekday = date.weekday() + 1
             openinghours = OpeningHours.objects.get(autoservice=autoservice, weekday=weekday)
-            if openinghours.working:
+
+            if openinghours.working and openinghours.worktime_till.hour>datetime.datetime.now().hour:
                 times = get_free_times(date, autoservice)
                 if len(times) != 0 :
                     data.append({"date":date, 'times':times})
