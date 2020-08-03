@@ -59,7 +59,10 @@ class AutoServiceAdmin(StaffRequiredAdminMixin,admin.ModelAdmin):
         obj.save()
 
 class AppointmentAdmin(StaffRequiredAdminMixin,admin.ModelAdmin):
-    list_display = ['user', 'autoservice', 'date', 'start_time']
+    list_display = ['user', 'autoservice', 'date', 'get_start_time']
+
+    def get_start_time(self, obj):
+        return obj.start_time.strftime("%H:%M")
 
     def get_queryset(self, request):
         qs = super(AppointmentAdmin, self).get_queryset(request)
