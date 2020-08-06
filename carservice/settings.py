@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
     'garage.apps.GarageConfig',
+    'shop.apps.ShopConfig',
     'notification.apps.NotificationConfig',
     'repair.apps.RepairConfig',
     'django.contrib.admin',
