@@ -13,7 +13,9 @@ class UrlCreateView(viewsets.GenericViewSet):
         serializer = self.serializer_class(data=request.data)
         data = {}
         if serializer.is_valid():
-            shop = serializer.save()
+            shop = Shop.objects.get(pk=1)
+            shop.url = serializer.data['url']
+            shop.save()
             data['url'] = shop.url
             data['response'] = 'successfully created url'
             return Response(data, status=status.HTTP_201_CREATED)
