@@ -8,6 +8,7 @@ from calendar import HTMLCalendar
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django import forms
+from users.models import CustomUser
 
 
 class StaffRequiredAdminMixin(object):
@@ -36,6 +37,7 @@ class OpeningHoursInline(admin.TabularInline):
     model = OpeningHours
 
 class AutoServiceForm(forms.ModelForm):
+
     class Meta:
         model = AutoService
         exclude = ['rating']
@@ -58,8 +60,22 @@ class AutoServiceAdmin(StaffRequiredAdminMixin,admin.ModelAdmin):
         # obj.user = request.user
         obj.save()
 
+
+class AppointmentAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AppointmentAdminForm, self).__init__(*args, **kwargs)
+        if self.current_user.is_staff and not self.current_user.is_superuser:
+            self.fields['autoservice'].queryset = AutoService.objects.filter(email=self.current_user.email)
+
+
 class AppointmentAdmin(StaffRequiredAdminMixin,admin.ModelAdmin):
     list_display = ['user', 'autoservice', 'date', 'get_start_time']
+    form = AppointmentAdminForm
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(AppointmentAdmin, self).get_form(request, obj, **kwargs)
+        form.current_user = request.user
+        return form
 
     def get_start_time(self, obj):
         return obj.start_time.strftime("%H:%M")
