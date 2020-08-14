@@ -51,6 +51,7 @@ class CarModel(models.Model):
 
 class Fuel(models.Model):
     name = models.CharField(max_length=200)
+    cost = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -78,6 +79,7 @@ class Car(models.Model):
     type_of_fuel = models.ForeignKey(Fuel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Вид топлива')
     rashod_topliva = models.IntegerField(verbose_name='Расход топлива', default=0, blank=True)
     current_vol = models.IntegerField(verbose_name='Текущее кол-во топлива', default=0)
+    description = models.TextField(default='', verbose_name='Описание')
 
     def get_absolute_url(self):
         return reverse('profile')

@@ -194,6 +194,8 @@ def zapravka_event_create(request, pk):
         serializer = ZapravkaEventSerializer(event, data=request.data)
         data = {}
         if serializer.is_valid():
+            pk = serializer.validated_data['type_of_fuel']
+            serializer.validated_data['amount_of_fuel'] = serializer.validated_data['money'] // pk.cost
             serializer.save()
             car.probeg = serializer.data['probeg']
             car.save()
