@@ -49,6 +49,6 @@ def notification_handler(sender, instance, created, **kwargs):
         for user in users:
             NotificationUser.objects.create(user=user, notification=instance)
         serializer = NotificationPushSerializer(instance)
-        device = FCMDevice.objects.filter(active=True)
+        device = FCMDevice.objects.all()
         print(device.count())
         send_to_topic(serializer.data, device)
