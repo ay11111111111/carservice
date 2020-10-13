@@ -1,12 +1,10 @@
+
 import sqlite3, os, json
 from dict import dic
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 with open(dir_path+'/json_data/car-list.json') as f:
     car_list = json.load(f)
-
-with open(dir_path+'/car-logos-dataset/car-logos.json') as f:
-    car_logos = json.load(f)
 
 try:
     sqliteConnection = sqlite3.connect('db.sqlite3')
