@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
     'garage.apps.GarageConfig',
+    'shop.apps.ShopConfig',
     'notification.apps.NotificationConfig',
+    'repair.apps.RepairConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,6 +63,7 @@ INSTALLED_APPS = [
     'datetime',
     'fcm_django',
     'django_filters',
+    'django_unixdatetimefield',
 ]
 
 FCM_DJANGO_SETTINGS = {
@@ -68,6 +71,16 @@ FCM_DJANGO_SETTINGS = {
         "FCM_SERVER_KEY": "AAAA3tZmleU:APA91bFMrBGIDBs7FRaFyZ8NOMKoCBJWWJ0-Ywx1MJjW6XgbkLfKOaZssdi6TXsiVfp1xiwCljCYbhKxwnI8fhSnxqgO2bbzJOFPTv-agoH0k0SvyA6MZonNmoFm786BYcuDeahvH2JY",
         "ONE_DEVICE_PER_USER": False,
         "DELETE_INACTIVE_DEVICES": False,
+        # "APP_VERBOSE_NAME": "Notification",
+         # default: _('FCM Django')
+        # "FCM_SERVER_KEY": "AAAA1pdV3MY:APA91bHrXzsPeFE3gDJ5x_dV0RL__wiT9DhhEYIu87yzOJ8uXQEmbYfralqVH7uIKd5DSKAnwmWf0AQc7plEclQK3xdfzbuvjIYpW8X6vdLxV_Af8KnvYiNZtjCaM4l7EdogH0rEKNpR",
+         # true if you want to have only one active device per registered user at a time
+         # default: False
+        # "ONE_DEVICE_PER_USER": False,
+         # devices to which notifications cannot be sent,
+         # are deleted upon receiving error response from FCM
+         # default: False
+        # "DELETE_INACTIVE_DEVICES": False,
 }
 
 USE_DJANGO_JQUERY = True
@@ -81,6 +94,11 @@ REST_FRAMEWORK = {
       'rest_framework.permissions.AllowAny',
   ),
   'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+  'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
 }
 
 SWAGGER_SETTINGS = {
@@ -153,13 +171,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+    )
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Almaty'
 
 USE_I18N = True
 

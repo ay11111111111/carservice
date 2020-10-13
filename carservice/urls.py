@@ -25,6 +25,8 @@ from drf_yasg import openapi
 import smart_selects
 from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
 from rest_framework.routers import DefaultRouter
+from .admin import autoserviceadmin
+
 
 router = DefaultRouter()
 router.register(r'devices', FCMDeviceAuthorizedViewSet)
@@ -49,12 +51,15 @@ urlpatterns = [
     path('carservice/', include('app.urls')),
     path('carservice/garage/', include('garage.urls')),
     path('carservice/admin/', admin.site.urls),
+    path('carservice/autoservice-admin/', autoserviceadmin.urls),
     path('carservice/register/', user_views.register, name="register"),
     path('carservice/login/', user_views.login_view, name="login"),
     path('carservice/logout/', user_views.logout_view, name="logout"),
     path('carservice/api/v1/auth/', include('users.api.urls')),
     path('carservice/api/v1/cars/', include('garage.api.urls')),
     path('carservice/api/v1/notification/', include('notification.api.urls')),
+    path('carservice/api/v1/repair/', include('repair.api.urls')),
+    path('carservice/api/v1/shop/', include('shop.api.urls')),
     url(r'^chaining/', include('smart_selects.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

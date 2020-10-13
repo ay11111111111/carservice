@@ -5,6 +5,9 @@ import datetime, os, json
 from django.urls import reverse
 from smart_selects.db_fields import ChainedForeignKey
 from datetime import datetime as dt
+from django_unixdatetimefield import UnixDateTimeField
+from carservice.settings import MEDIA_ROOT
+
 
 def year_choices():
     return [(r,r) for r in range(1984, datetime.date.today().year+1)]
@@ -46,6 +49,13 @@ class CarModel(models.Model):
         except:
             return self.__dict__
 
+class Fuel(models.Model):
+    name = models.CharField(max_length=200)
+    cost = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
 class Car(models.Model):
     KOROBKA_CHOICES = (
         ('auto', 'Автомат'),
@@ -65,7 +75,11 @@ class Car(models.Model):
     year_of_issue = models.CharField(max_length=5, verbose_name='Год выпуска')
     korobka = models.CharField(max_length=60, verbose_name='Коробка')
     volume_dvigatel = models.DecimalField(default=0, max_digits=10, decimal_places=1, verbose_name='Объем двигателя')
-    probeg = models.IntegerField(verbose_name='Пробег')
+    probeg = models.IntegerField(verbose_name='Пробег', default=0)
+    type_of_fuel = models.ForeignKey(Fuel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Вид топлива')
+    rashod_topliva = models.IntegerField(verbose_name='Расход топлива', default=0, blank=True)
+    current_vol = models.IntegerField(verbose_name='Текущее кол-во топлива', default=0)
+    description = models.TextField(default='', verbose_name='Описание')
 
     def get_absolute_url(self):
         return reverse('profile')
@@ -86,11 +100,12 @@ class Car(models.Model):
 
 
 class CarImages(models.Model):
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='carimagess')
     image = models.ImageField(upload_to='images/', verbose_name='Image')
 
     def __str__(self):
-        return self.car.user.email + '\'s ' + self.car.car_marka.name + ' ' + self.car.car_model.name
+        #return self.car.user.email + '\'s ' + self.car.car_marka.name + ' ' + self.car.car_model.name
+        return str(MEDIA_ROOT) + '/' + str(self.image)
 
 
 class Event(models.Model):
@@ -99,21 +114,23 @@ class Event(models.Model):
         ('service', 'Сервис'),
         ('other', 'Другое')
     )
-    FUEL_CHOICES = (
-        ('80', 'АИ-80'),
-        ('92', 'АИ-92'),
-        ('93', 'АИ-93'),
-        ('95', 'АИ-95'),
-        ('98', 'АИ-98'),
-        ('diesel', 'ДТ')
-    )
 
     car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='Машина')
     type = models.CharField(max_length=60, choices=EVENT_CHOICES, verbose_name='Тип')
-    type_of_fuel = models.CharField(blank=True, max_length=60, choices=FUEL_CHOICES, verbose_name='Вид топлива')
+    type_of_fuel = models.ForeignKey(Fuel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Вид топлива')
     amount_of_fuel = models.IntegerField(blank=True, default=0, verbose_name='Количество л.')
     name = models.CharField(max_length=100, verbose_name='Название', blank=True)
     money = models.IntegerField(verbose_name='Сумма')
     probeg = models.IntegerField(verbose_name="Пробег")
     comment = models.CharField(max_length=200, verbose_name='Комментарий', blank=True)
     date = models.DateTimeField(default=dt.now, blank=True, verbose_name='Дата и время')
+
+class CalendarEvent(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200, verbose_name='Название')
+    place = models.CharField(max_length=200, verbose_name='Место')
+    date = models.DateTimeField(verbose_name='Дата')
+    # date = UnixDateTimeField()
+
+    def __str__(self):
+        return self.name

@@ -10,6 +10,7 @@ urlpatterns = [
     path('profile/update/', views.user_update, name='update'),
     path('password/new/', views.NewPassword.as_view({'post':'post'})),
     path('password/forgot/', views.ForgotPassword.as_view({'post':'post'})),
+    path('techsupport/', views.TechSupportView.as_view({'post':'post'})),
 ]
 
 

@@ -7,7 +7,7 @@ __pycache__/
 *$py.class
 
 carservice/settings.py
-
+carservice/media
 # C extensions
 *.so
 **/migrations/*
